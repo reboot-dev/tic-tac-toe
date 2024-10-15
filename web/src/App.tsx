@@ -71,11 +71,11 @@ export default function Game() {
   const { useHistory, update} = useGame({ id: 'GAME' })
   const { response } = useHistory()
 
+  const [currentMove, setCurrentMove] = useState(0);
   if (response === undefined) return <></>
-
   const history = response.moves
 
-  const [currentMove, setCurrentMove] = useState(0);
+  
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
