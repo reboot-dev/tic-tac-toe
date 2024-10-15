@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package tic_tac_toe.v1;
+
+import "rbt/v1alpha1/options.proto";
+
+
+message Move {
+  repeated string board = 1;
+}
+
+message Game {
+  option (rbt.v1alpha1.state) = {};
+  repeated Move moves = 1;
+}
+
+service GameInterface {
+  rpc History(HistoryRequest) returns (HistoryResponse) {
+    option (rbt.v1alpha1.method).reader = {};
+  }
+
+  rpc Update(UpdateRequest) returns (UpdateResponse) {
+    option (rbt.v1alpha1.method).writer = {};
+  }
+}
+
+message HistoryRequest {}
+
+message HistoryResponse {
+  repeated Move moves = 1;
+}
+
+message UpdateRequest {
+  repeated Move moves = 1;
+}
+
+message UpdateResponse {}
