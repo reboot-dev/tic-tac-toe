@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { Move, useGame } from "./api/tic_tac_toe/v1/game_rbt_react";
 function Square({
   value,
   onSquareClick,
@@ -16,13 +16,14 @@ function Square({
 
 function Board({
   xIsNext,
-  squares,
+  move,
   onPlay,
 }: {
   xIsNext: boolean;
-  squares: string[];
+  move: Move;
   onPlay: (nextSquares: string[]) => void;
 }) {
+  const squares = move.board
   function handleClick(i: number) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -67,16 +68,21 @@ function Board({
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
-  // const { useHistory} = useGame()
-  // const { response } = useHistory()
+  const { useHistory, update} = useGame({ id: 'GAME' })
+  const { response } = useHistory()
+
+  if (response === undefined) return <></>
+
+  const history = response.moves
+
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
   function handlePlay(nextSquares: string[]) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    setHistory(nextHistory);
+    const nextMove = new Move({board: nextSquares})
+    const nextHistory = [...history.slice(0, currentMove + 1), nextMove];
+    update({ moves: nextHistory});
   }
 
   function jumpTo(nextMove: number) {
@@ -100,7 +106,7 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board xIsNext={xIsNext} move={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
